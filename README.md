@@ -116,3 +116,84 @@ It might be good to add some physical pots for the stick calibration. Some adjus
 I noticed that when you have the stick all the way down and to the left, sometimes there's an overflow and the stick will jump to the top in the joystick calibration program. This also happens with my old school physical joystick so maybe it's just a practical hardware limitation.
 
 I've never designed a PCB before, but I think this would be pretty cheap if someone wanted to give it a go. I'd go in on it with you if you want to build a bunch. I used through hole components since I suck at soldering and am scared to try doing SMDs.
+
+---
+
+# Addendum by jpmhouston ... First draft of a PCB 🎉
+
+This is made directly from the KiCad schematic, I haven't made a breadboard prototype yet. I'm a beginner at PCBs also, but started learning KiCad recently for another project.
+
+I don't know how the details about the DE9 connector and its mounting screws. It's possible Q3 needs to be moved elsewhere, and maybe other things right beside the connector And Q3 is the one I didn't find a surface mount replacement for yet (in part because I don't really know what it is haha). The rest, beside the connector, being small surface mount components might make it light enough to stay plugged in without ever needing the screws.
+
+I picked a push button for the pairing switch. The only thinking I did about a case is guessing that it could be made shallow at the back to allow exposing the button. I also don't know much about the ESP32 and guessed that the antenna part needs to be exposed off the board at the back, potentially exposed though an eventual case.
+
+This board design measures 34mm wide (just under 1 3/8") x 35.8mm deep not counting the antenna (just over 1 3/8"). I I haven't yet, but I intended to make a mock up out of cardboard, see how this looks compared to real hardware (I have a //e here).
+
+![pcb top](images/pcb-top.jpg)
+
+![pcb bottom](images/pcb-bottom.jpg)
+
+![pcb side](images/pcb-side.jpg)
+
+---
+
+These are the changes made to KiCad schematic, mostly just finding replacement surface mount components but I did make changes to the symbols for the diode and DE9 connector. I'm hoping kirbyfrugia can give it a look before I do a pull request, an exported png of the schematic is in "images/kicad schematic update.png". Also FYI, some of the component choices were made with assistance from an LLM, they need to be reviewed by knowledgeable human.
+
+```
+Added model to ESP32 U1:
+
+same data sheet, symbol, footprint
+files from https://www.digikey.com/en/products/detail/espressif-systems/ESP32-WROOM-32E-N8/13159522 (saved to components/ESP32-WROOM-32E)
+3d model ${KIPRJMOD}/components/ESP32-WROOM-32E/ESP32-WROOM-32E-N8.STEP (x: 90deg, dy: 3.0mm)
+
+Picked replacement surface mount parts for U1,2,4,5:
+
+same data sheet and symbol, new footprint and 3d model
+files from https://www.digikey.com/en/products/detail/microchip-technology/MCP4161-104E-MS/1874189 (saved to components/MCP4161_104E_MS)
+footprint MCP4161_104E_MS:MSOP8_MC_MCH after adding ${KIPRJMOD}/components/MCP4161_104E_MS/KiCADv6/footprints.pretty
+3d model ${KIPRJMOD}/components/MCP4161_104E_MS/MSOP8_MC_MCH.step
+
+Picked replacement surface mount part for U6:
+
+same data sheet and symbol, new footprint and 3d model
+files from https://www.digikey.com/en/products/detail/texas-instruments/SN74HCT245DW/277257 (saved to components/SN74HCT245DW)
+footprint SN74HCT245DW:DW20 after adding ${KIPRJMOD}/components/SN74HCT245DW/KiCADv6/footprints.pretty
+3d model ${KIPRJMOD}/components/SN74HCT245DW/DW0020A.stp
+
+Changed JS1 to a true DE9 symbol, footprint, model:
+
+new symbol 9-pin D-SUB connector, pins (male), Mounting Hole
+footprint Connector_Dsub:DSUB-9_Pins_Horizontal_P2.77x2.54mm_EdgePinOffset9.40mm
+
+Picked surface mount part for switch SW1:
+
+same symbol, new data sheet, footprint and 3d model
+Omron B3U-1000P-B data sheet https://omronfs.omron.com/en_US/ecb/products/pdf/en-b3u.pdf
+files from https://www.digikey.com/en/products/detail/omron-electronics-inc-emc-div/B3U-1000P-B/1811777 (saved to components/B3U_1000P_B)
+footprint B3U_1000P_B:B3U-1000P-B after adding ${KIPRJMOD}/components/B3U_1000P_B/KiCADv6/footprints.pretty
+3d model ${KIPRJMOD}/components/B3U_1000P_B/B3U_1000P[]_B.step (x: 90deg)
+
+Picked surface mount parts for resistors R1,2,5,6:
+
+same symbol, new footprint and 3d model
+https://pim.murata.com/asset/pim4/ceramicCapacitorSMD/GRM188D71A475KE11-01A-EN_PDF_CERAMICCAPACITORSMD
+footprint Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder
+3d model ${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step
+
+Picked surface mount parts for capacitors C1,2,3,4:
+
+same symbol, new footprint and 3d model
+https://yageogroup.com/content/Resource%20Library/Datasheet/PYU-RC_51_ROHS_P.pdf
+footprint Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder
+3m model ${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step
+
+Changed D1,2 barrier rectifier diodes to D1 single surface mount package containing 2 independent barrier rectifiers:
+
+new symbol, footprint, 3d model
+Diode Array 2 Independent 20 V 1A Surface Mount SOT-23-5 Thin, TSOT-23-5
+data sheet https://fscdn.rohm.com/en/products/databook/datasheet/discrete/diode/schottky_barrier/rb496eatr-e.pdf
+files from https://www.digikey.ca/en/models/926235 (saved to components/RB496EATR)
+symbol RB496EATR after adding symbol ${KIPRJMOD}/components/RB496EATR/KiCADv6/2026-03-08_05-44-21.kicad_sym
+footprint RB496EATR:DIO_FTZ_ROM after adding ${KIPRJMOD}/components/RB496EATR/KiCADv6/footprints.pretty
+3d model ${KIPRJMOD}/components/RB496EATR/DIO_FTZ_ROM.step
+```
