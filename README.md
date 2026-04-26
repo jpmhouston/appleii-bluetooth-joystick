@@ -119,15 +119,17 @@ I've never designed a PCB before, but I think this would be pretty cheap if some
 
 ---
 
-# Addendum by jpmhouston ... First draft of a PCB 🎉
+# Addendum by jpmhouston ... Second draft of a PCB 🎉
 
 This is made directly from the KiCad schematic, I haven't made a breadboard prototype yet. I'm a beginner at PCBs also, but started learning KiCad recently for another project.
 
-I don't know how the details about the DE9 connector and its mounting screws. It's possible Q3 needs to be moved elsewhere, and maybe other things right beside the connector And Q3 is the one I didn't find a surface mount replacement for yet (in part because I don't really know what it is haha). The rest, beside the connector, being small surface mount components might make it light enough to stay plugged in without ever needing the screws.
+I don't know much about the DE9 serial port connector and its mounting screws (called jackscrews?), but I moved some components around from the simply rectangular, first draft PCB and now there might be enough space for them (slightly more then 1cm).
 
-I picked a push button for the pairing switch. The only thinking I did about a case is guessing that it could be made shallow at the back to allow exposing the button. I also don't know much about the ESP32 and guessed that the antenna part needs to be exposed off the board at the back, potentially exposed though an eventual case.
+Component Q3 is the one I didn't find a surface mount replacement for however there's more than enough vertical space for it compared to the DE9 connector which I placed it close to. I picked a push button for the pairing switch and placed it at the back. The only thinking I did about a case is guessing that it could be made shallow at the back to allow exposing this button.
 
-This board design measures 34mm wide (just under 1 3/8") x 35.8mm deep not counting the antenna (just over 1 3/8"). I I haven't yet, but I intended to make a mock up out of cardboard, see how this looks compared to real hardware (I have a //e here).
+I also don't know much about the ESP32 and guessed that the antenna part needs to be exposed off the board at the back, exposed though an eventual case.
+
+This board design measures 34mm wide (just under 1 3/8") x 35.8mm deep (also roughly 1 1/2") not counting the antenna. I haven't yet, but I intended to make a mock up out of cardboard, see how this sizes up compared to real hardware (I have a //e here).
 
 ![pcb top](images/pcb-top.jpg)
 
@@ -140,13 +142,16 @@ This board design measures 34mm wide (just under 1 3/8") x 35.8mm deep not count
 These are the changes made to KiCad schematic, mostly just finding replacement surface mount components but I did make changes to the symbols for the diode and DE9 connector. I'm hoping kirbyfrugia can give it a look before I do a pull request, an exported png of the schematic is in "images/kicad schematic update.png". Also FYI, some of the component choices were made with assistance from an LLM, they need to be reviewed by knowledgeable human.
 
 ```
-Added model to ESP32 U1:
+Renumbered U1-5 to make MCP4161's U1-4 corresponding to C1-4, ESP now U5
+Renumbered R5,6 to R3,4 as schematic had no R3,4
+
+Added model to ESP32 U5:
 
 same data sheet, symbol, footprint
 files from https://www.digikey.com/en/products/detail/espressif-systems/ESP32-WROOM-32E-N8/13159522 (saved to components/ESP32-WROOM-32E)
 3d model ${KIPRJMOD}/components/ESP32-WROOM-32E/ESP32-WROOM-32E-N8.STEP (x: 90deg, dy: 3.0mm)
 
-Picked replacement surface mount parts for U1,2,4,5:
+Picked replacement surface mount parts for MCP4161 U1-4:
 
 same data sheet and symbol, new footprint and 3d model
 files from https://www.digikey.com/en/products/detail/microchip-technology/MCP4161-104E-MS/1874189 (saved to components/MCP4161_104E_MS)
@@ -173,14 +178,14 @@ files from https://www.digikey.com/en/products/detail/omron-electronics-inc-emc-
 footprint B3U_1000P_B:B3U-1000P-B after adding ${KIPRJMOD}/components/B3U_1000P_B/KiCADv6/footprints.pretty
 3d model ${KIPRJMOD}/components/B3U_1000P_B/B3U_1000P[]_B.step (x: 90deg)
 
-Picked surface mount parts for resistors R1,2,5,6:
+Picked surface mount parts for resistors R1-4:
 
 same symbol, new footprint and 3d model
 https://pim.murata.com/asset/pim4/ceramicCapacitorSMD/GRM188D71A475KE11-01A-EN_PDF_CERAMICCAPACITORSMD
 footprint Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder
 3d model ${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step
 
-Picked surface mount parts for capacitors C1,2,3,4:
+Picked surface mount parts for capacitors C1-4:
 
 same symbol, new footprint and 3d model
 https://yageogroup.com/content/Resource%20Library/Datasheet/PYU-RC_51_ROHS_P.pdf
